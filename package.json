@@ -1,0 +1,19 @@
+{
+  "name": "azbuka-backend",
+  "version": "1.0.0",
+  "description": "Azbuka Backend",
+  "main": "main.js",
+  "scripts": {
+    "dev": "nodemon main.js"
+  },
+  "author": "Turar Abu[https://www.turarabu.me/]",
+  "license": "MIT",
+  "dependencies": {
+    "colors": "^1.3.3",
+    "express": "^4.17.0",
+    "mongodb": "^3.2.5"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.0"
+  }
+}
