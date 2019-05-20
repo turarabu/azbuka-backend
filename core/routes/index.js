@@ -57,7 +57,17 @@ function decor (dir, type, method, db) {
     var handler = routes[dir][type][method];
 
     return function (req, res, next) {
-        var cont = { next, db }
+        var cont = { next, db, success }
         handler.call(cont, req, res);
+
+        function success () {
+            res.status(200);
+            res.send(JSON.stringify({
+                error: false,
+                success: true
+            }));
+
+            return res.end();
+        }
     };
 }

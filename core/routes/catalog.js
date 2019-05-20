@@ -19,7 +19,7 @@ function add (req, res) {
         }
 
         console.log(result);
-        self.next();
+        self.success();
     });
 }
 

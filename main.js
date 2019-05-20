@@ -13,10 +13,10 @@ app.use( express.json() );
 app.use( express.urlencoded({ extended: true }) );
 
 app.listen(config.server.port, async function () {
-    console.log( colors.green(`Сервер запущен на порту ${config.server.port}`) );
-
     var db = await DB.catch(process.exit);
     var router = routes.init(express, db);
 
     app.use(router);
+
+    console.log( colors.green(`Сервер запущен на порту ${config.server.port}`) );
 });
