@@ -27,6 +27,7 @@ function connect (config, resolve, reject) {
         return resolve({
             test: database.collection('test'),
 
+            shop: database.collection('shop'),
             catalog: database.collection('catalog'),
             bonuses: database.collection('bonuses'),
             orders: database.collection('orders')
