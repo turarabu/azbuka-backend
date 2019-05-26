@@ -1,6 +1,7 @@
 const routes = {
     catalog: require('./catalog'),
-    shop: require('./shop')
+    shop: require('./shop'),
+    city: require('./city')
 };
 
 module.exports = { init };
