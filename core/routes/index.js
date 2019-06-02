@@ -45,7 +45,7 @@ function sign (Router, type, dir, mongodb) {
 function signErrors (router, mongodb) {
     router.use(function (req, res, next) {
         if ( req.route === undefined ) {
-            res.status(405);
+            res.status(404);
             res.send(JSON.stringify({
                 success: false,
                 message: 'method does not exists!'

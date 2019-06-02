@@ -62,6 +62,7 @@ async function remove (req) {
 }
 
 function list (req, res) {
+    console.log('Getting catalog by ', req.query)
     var self = this
     var where = req.query
 
