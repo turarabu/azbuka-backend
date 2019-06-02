@@ -61,8 +61,29 @@ async function remove (req) {
     return this.success()
 }
 
-function list (req) {
+function list (req, res) {
+    var self = this
+    var where = req.query
 
+    this.db.item.find(where).toArray(function (error, result) {
+        if (error)
+            self.error({
+                error: true,
+                message: `Database error`,
+                details: JSON.stringify(error) 
+            })
+
+        else {
+            res.status(200)
+            res.send( JSON.stringify({
+                error: false,
+                success: true,
+                data: result
+            }) )
+
+            res.end()
+        }
+    })
 }
 
 function getList (body) {
