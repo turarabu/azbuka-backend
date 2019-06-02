@@ -1,7 +1,8 @@
 const routes = {
     catalog: require('./catalog'),
     shop: require('./shop'),
-    city: require('./city')
+    city: require('./city'),
+    item: require('./item')
 };
 
 module.exports = { init };
@@ -56,11 +57,18 @@ function signErrors (router, mongodb) {
 }
 
 function decor (dir, type, method, db) {
-    var handler = routes[dir][type][method];
+    var handler = routes[dir][type][method]
 
     return function (req, res, next) {
-        var cont = { next, db, success }
-        handler.call(cont, req, res);
+        var cont = { next, db, success, error }
+        handler.call(cont, req, res)
+
+        function error (message) {
+            res.status(400);
+            res.send( JSON.stringify(message) )
+
+            return res.end()
+        }
 
         function success () {
             res.status(200);
@@ -69,7 +77,7 @@ function decor (dir, type, method, db) {
                 success: true
             }));
 
-            return res.end();
+            return res.end()
         }
     };
 }

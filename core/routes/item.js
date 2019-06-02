@@ -1,4 +1,4 @@
-const addRequires = ['id', 'name', 'level', 'isCollection', 'parent']
+const addRequires = ['id', 'parentId', 'name', 'headImage', 'buildable', 'manufacturer']
 
 module.exports = {
     post: { add, edit, remove },
@@ -9,10 +9,10 @@ async function add (req) {
     var list = getList(req.body)
 
     for (let i = 0; i != list.length; ++i) {
-        let catalog = list[i]
-        let check = await checkRequires(catalog, ...addRequires)
-        check = await existCatalog(this.db.catalog, catalog, check)
-        check = await addCatalog(this.db.catalog, catalog, check)
+        let item = list[i]
+        let check = await checkRequires(item, ...addRequires)
+        check = await existItem(this.db.item, item, check)
+        check = await addItem(this.db.item, item, check)
 
         if (check !== true)
             return this.error(check)        
@@ -25,10 +25,10 @@ async function edit (req) {
     var list = getList(req.body)
 
     for (let i = 0; i != list.length; ++i) {
-        let catalog = list[i]
-        let check = await checkRequires(catalog, 'id')
-        check = await existCatalog(this.db.catalog, catalog, check)
-        check = await editCatalog(this.db.catalog, catalog, check)
+        let item = list[i]
+        let check = await checkRequires(item, 'id')
+        check = await existItem(this.db.item, item, check)
+        check = await editItem(this.db.item, item, check)
 
         if (check !== true)
             return this.error(check)        
@@ -41,9 +41,9 @@ async function remove (req) {
     var list = getList(req.body)
 
     for (let i = 0; i != list.length; ++i) {
-        let catalog = list[i]
-        let check = await checkRequires(catalog, 'id')
-        check = await removeCatalog(this.db.catalog, catalog, check)
+        let item = list[i]
+        let check = await checkRequires(item, 'id')
+        check = await removeItem(this.db.item, item, check)
 
         if (check !== true)
             return this.error(check)        
@@ -61,14 +61,14 @@ function getList (body) {
         ? body.list : [body]
 }
 
-function checkRequires (catalog, ...requires) {
+function checkRequires (item, ...requires) {
     return iPromise(true, function (resolve) {
         for(let r = 0; r != requires.length; ++r) {
-            if ( catalog[ requires[r]] === undefined )
+            if ( item[ requires[r]] === undefined )
                 return resolve({
                     error: true,
                     message: `Didn't recieve required param`,
-                    details: `Property ${requires[r]} not found in data ${ JSON.stringify(catalog) }`
+                    details: `Property ${requires[r]} not found in data ${ JSON.stringify(item) }`
                 })
         }
 
@@ -76,9 +76,9 @@ function checkRequires (catalog, ...requires) {
     })
 }
 
-function existCatalog (db, catalog, check) {
+function existItem (db, item, check) {
     return iPromise(check, function (resolve) {
-        var where = { id: catalog.id }
+        var where = { id: item.id }
         
         db.findOne(where, dbHandler(resolve, function (result) {
             if (result === null)
@@ -88,31 +88,31 @@ function existCatalog (db, catalog, check) {
     })
 }
 
-function addCatalog (db, catalog, check) {
+function addItem (db, item, check) {
     return iPromise(check, function (resolve) {
         if (check === true)
             return resolve({
                 error: true,
-                message: `Catalog with id ${catalog.id} already exists`
+                message: `Item with id ${item.id} already exists`
             })
 
-        else db.insertOne(catalog, dbHandler(resolve, function () {
+        else db.insertOne(item, dbHandler(resolve, function () {
             resolve(true)
         }))
     })
 }
 
-function editCatalog (db, catalog, check) {
+function editItem (db, item, check) {
     return iPromise(check, function (resolve) {
         if (check === false)
             return resolve({
                 error: true,
-                message: `Catalog with id ${catalog.id} not exists`
+                message: `Item with id ${item.id} not exists`
             })
 
         else {
-            let where = { id: catalog.id }
-            let set = { $set: catalog }
+            let where = { id: item.id }
+            let set = { $set: item }
 
             db.updateOne(where, set, dbHandler(resolve, function () {
                 resolve(true)
@@ -121,9 +121,9 @@ function editCatalog (db, catalog, check) {
     })
 }
 
-function removeCatalog (db, catalog, check) {
+function removeItem (db, item, check) {
     return iPromise(check, function (resolve) {
-        let where = { id: catalog.id }
+        let where = { id: item.id }
         db.deleteOne(where, dbHandler(resolve, function (result) {
             resolve(true)
         }))
