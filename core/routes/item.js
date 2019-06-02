@@ -15,8 +15,10 @@ async function add (req) {
         check = await existItem(this.db.item, item, check)
         check = await addItem(this.db.item, item, check)
 
-        if (check !== true)
-            return this.error(check)        
+        if (check !== true) {
+            console.log('Error: ', check)
+            return this.error(check)
+        }
     }
 
     return this.success()
@@ -32,8 +34,10 @@ async function edit (req) {
         check = await existItem(this.db.item, item, check)
         check = await editItem(this.db.item, item, check)
 
-        if (check !== true)
-            return this.error(check)        
+        if (check !== true) {
+            console.log('Error: ', check)
+            return this.error(check)
+        }
     }
 
     return this.success()
@@ -48,8 +52,10 @@ async function remove (req) {
         let check = await checkRequires(item, 'id')
         check = await removeItem(this.db.item, item, check)
 
-        if (check !== true)
-            return this.error(check)        
+        if (check !== true) {
+            console.log('Error: ', check)
+            return this.error(check)
+        }
     }
 
     return this.success()

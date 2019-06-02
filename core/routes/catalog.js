@@ -1,4 +1,4 @@
-const addRequires = ['id', 'name', 'level', 'isCollection', 'parent']
+const addRequires = ['id', 'name', 'level', 'isCollection', 'parentId']
 
 module.exports = {
     post: { add, edit, remove },
@@ -15,8 +15,10 @@ async function add (req) {
         check = await existCatalog(this.db.catalog, catalog, check)
         check = await addCatalog(this.db.catalog, catalog, check)
 
-        if (check !== true)
-            return this.error(check)        
+        if (check !== true) {
+            console.log('Error: ', check)
+            return this.error(check)
+        }
     }
 
     return this.success()
@@ -32,8 +34,10 @@ async function edit (req) {
         check = await existCatalog(this.db.catalog, catalog, check)
         check = await editCatalog(this.db.catalog, catalog, check)
 
-        if (check !== true)
-            return this.error(check)        
+        if (check !== true) {
+            console.log('Error: ', check)
+            return this.error(check)
+        }
     }
 
     return this.success()
@@ -48,8 +52,10 @@ async function remove (req) {
         let check = await checkRequires(catalog, 'id')
         check = await removeCatalog(this.db.catalog, catalog, check)
 
-        if (check !== true)
-            return this.error(check)        
+        if (check !== true) {
+            console.log('Error: ', check)
+            return this.error(check)
+        }
     }
 
     return this.success()
