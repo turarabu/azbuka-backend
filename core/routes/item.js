@@ -89,6 +89,8 @@ function existItem (db, item, check) {
     return iPromise(check, function (resolve) {
         var where = { id: item.id }
         
+        console.log(where)
+
         db.findOne(where, dbHandler(resolve, function (result) {
             if (result === null)
                 return resolve(false)

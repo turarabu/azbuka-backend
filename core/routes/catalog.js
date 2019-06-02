@@ -1,4 +1,4 @@
-const addRequires = ['id', 'name', 'level', 'isCollection', 'parentId']
+const addRequires = ['id', 'name', 'parentId']
 
 module.exports = {
     post: { add, edit, remove },
@@ -89,6 +89,8 @@ function existCatalog (db, catalog, check) {
     return iPromise(check, function (resolve) {
         var where = { id: catalog.id }
         
+        console.log(where)
+
         db.findOne(where, dbHandler(resolve, function (result) {
             if (result === null)
                 return resolve(false)
