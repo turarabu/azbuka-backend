@@ -6,6 +6,7 @@ module.exports = {
 }
 
 async function add (req) {
+    console.log('Adding catalog')
     var list = getList(req.body)
 
     for (let i = 0; i != list.length; ++i) {
@@ -22,6 +23,7 @@ async function add (req) {
 }
 
 async function edit (req) {
+    console.log('Editing catalog')
     var list = getList(req.body)
 
     for (let i = 0; i != list.length; ++i) {
@@ -38,6 +40,7 @@ async function edit (req) {
 }
 
 async function remove (req) {
+    console.log('Removing catalog')
     var list = getList(req.body)
 
     for (let i = 0; i != list.length; ++i) {
@@ -97,6 +100,7 @@ function addCatalog (db, catalog, check) {
             })
 
         else db.insertOne(catalog, dbHandler(resolve, function () {
+            console.log(`Added catalog ${catalog.id} with name ${catalog.name}`)
             resolve(true)
         }))
     })
@@ -115,6 +119,7 @@ function editCatalog (db, catalog, check) {
             let set = { $set: catalog }
 
             db.updateOne(where, set, dbHandler(resolve, function () {
+                console.log(`Edited catalog ${catalog.id}`)
                 resolve(true)
             }))
         }
@@ -125,6 +130,7 @@ function removeCatalog (db, catalog, check) {
     return iPromise(check, function (resolve) {
         let where = { id: catalog.id }
         db.deleteOne(where, dbHandler(resolve, function (result) {
+            console.log(`Removed catalog ${catalog.id}`)
             resolve(true)
         }))
 

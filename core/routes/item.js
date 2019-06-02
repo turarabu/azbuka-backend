@@ -6,6 +6,7 @@ module.exports = {
 }
 
 async function add (req) {
+    console.log('Adding item')
     var list = getList(req.body)
 
     for (let i = 0; i != list.length; ++i) {
@@ -22,6 +23,7 @@ async function add (req) {
 }
 
 async function edit (req) {
+    console.log('Editing item')
     var list = getList(req.body)
 
     for (let i = 0; i != list.length; ++i) {
@@ -38,6 +40,7 @@ async function edit (req) {
 }
 
 async function remove (req) {
+    console.log('Removing item')
     var list = getList(req.body)
 
     for (let i = 0; i != list.length; ++i) {
@@ -97,6 +100,7 @@ function addItem (db, item, check) {
             })
 
         else db.insertOne(item, dbHandler(resolve, function () {
+            console.log('Added item with id ', item.id)
             resolve(true)
         }))
     })
@@ -115,6 +119,7 @@ function editItem (db, item, check) {
             let set = { $set: item }
 
             db.updateOne(where, set, dbHandler(resolve, function () {
+                console.log('Edited item with id ', item.id)
                 resolve(true)
             }))
         }
@@ -125,6 +130,7 @@ function removeItem (db, item, check) {
     return iPromise(check, function (resolve) {
         let where = { id: item.id }
         db.deleteOne(where, dbHandler(resolve, function (result) {
+            console.log('Removed item with id ', item.id)
             resolve(true)
         }))
 
