@@ -2,7 +2,8 @@ const routes = {
     catalog: require('./catalog'),
     shop: require('./shop'),
     city: require('./city'),
-    item: require('./item')
+    item: require('./item'),
+    image: require('./image')
 };
 
 module.exports = { init };
