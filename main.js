@@ -18,6 +18,19 @@ app.use( busboy({ immediate: true }) );
 app.use( express.json({ limit: '100mb' }) );
 app.use( express.urlencoded({ extended: true, limit: '100mb' }) );
 
+
+app.use(function (req, res, next) {
+    var body = ''
+
+    req.on('data', chunk => body += chunk)
+    req.on('end', function () {
+        req.theBody = body
+        console.log(body)
+    })
+
+    next()
+})
+
 app.listen(config.server.port, async function () {
     var db = await DB.catch(process.exit);
     var router = routes.init(express, db);

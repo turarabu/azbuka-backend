@@ -8,6 +8,7 @@ module.exports = {
 function upload (req) {
     console.log('\nIncoming upload')
     console.log(req.headers)
+    console.log('theBody', req.theBody === undefined)
     var files = 0
     var self = this
     req.pipe(req.busboy)
