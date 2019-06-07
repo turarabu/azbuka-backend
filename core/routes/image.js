@@ -6,20 +6,29 @@ module.exports = {
 }
 
 function upload (req) {
+    console.log('\nIncoming upload')
+    var files = 0
     var self = this
     req.pipe(req.busboy)
 
     req.busboy.on('file', function (fieldname, file, filename) {
-        fstream = fs.createWriteStream( config.storage.image(filename) )
+        console.log('Triggered file', filename)
+        var fstream = fs.createWriteStream( config.storage.image(filename) )
+        ++files
 
         file.pipe(fstream)
-        fstream.on('close', function () {       
-            self.success()
+        fstream.on('close', function () {
+            console.log('Saved', filename)
+            if (files -1 === 0) {
+                console.log('All files uploaded!')
+                return self.success()
+            }
+            else --files
         })
     })
 }
 
-function remove (req, res) {
+function remove (req) {
     var self = this
 
     if (req.query.image === undefined)
