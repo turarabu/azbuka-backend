@@ -10,6 +10,8 @@ module.exports = function (req, res, next) {
     req.on('end', function () {
         files.pipe( busboy )
 
+        console.log(body.replace(' --', '--'))
+
         files.push( body.replace(' --', '--'))
         files.push(null)
 
