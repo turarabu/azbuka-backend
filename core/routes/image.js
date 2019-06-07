@@ -6,15 +6,18 @@ module.exports = {
 }
 
 function upload (req) {
+    console.log('Incoming upload')
     var files = 0
     var self = this
 
     req.busboy.on('file', function (fieldname, file, filename) {
+        console.log('Incoming file', filename)
         var fstream = fs.createWriteStream( config.storage.image(filename) )
         ++files
 
         file.pipe(fstream)
         fstream.on('close', function () {
+            console.log('File', filename, 'saved')
             if (files -1 === 0)
                 return self.success()
 
