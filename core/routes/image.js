@@ -1,3 +1,6 @@
+const Readable = require('stream').Readable;
+var Busboy = require('busboy');
+ // redundant? see update below
 const fs = require('fs')
 
 module.exports = {
@@ -11,9 +14,17 @@ function upload (req) {
     console.log('theBody', req.theBody === undefined)
     var files = 0
     var self = this
-    req.pipe(req.busboy)
+    var busboy = new Busboy({ headers: req.headers });
 
-    req.busboy.on('file', function (fieldname, file, filename) {
+    var string = new Readable
+    string.pipe(busboy)
+    string.push(req.theBody)
+    string.push(null)
+
+
+    console.log(req.theBody)
+
+    busboy.on('file', function (fieldname, file, filename) {
         console.log('Triggered file', filename)
         var fstream = fs.createWriteStream( config.storage.image(filename) )
         ++files

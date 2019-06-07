@@ -1,6 +1,5 @@
 const MongoClient = require('mongodb').MongoClient;
 const express = require('express');
-const busboy = require('connect-busboy');
 // const fileUpload = require('express-fileupload');
 const colors = require('colors');
 
@@ -13,7 +12,6 @@ const DB = database.init(config.database, MongoClient);
 
 global.config = config
 
-app.use( busboy({ immediate: true }) );
 // app.use( fileUpload() );
 app.use( express.json({ limit: '100mb' }) );
 app.use( express.urlencoded({ extended: true, limit: '100mb' }) );
@@ -24,11 +22,9 @@ app.use(function (req, res, next) {
 
     req.on('data', chunk => body += chunk)
     req.on('end', function () {
-        req.theBody = body
-        console.log(body)
+        req.theBody = body.replace(' --', '--')
+        next()
     })
-
-    next()
 })
 
 app.listen(config.server.port, async function () {
