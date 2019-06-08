@@ -1,4 +1,5 @@
 const fs = require('fs')
+const base64ToImage = require('base64-to-image')
 
 module.exports = {
     post: { upload },
@@ -10,9 +11,9 @@ function upload (req) {
     var files = 0
     var self = this
 
-    req.busboy.on('file', function (fieldname, file, filename) {
+    req.busboy.on('file', async function (fieldname, file, filename) {
         console.log('Incoming file', filename)
-        var fstream = fs.createWriteStream( config.storage.image(filename) )
+        await saveFile( file )
         ++files
 
         file.pipe(fstream)
@@ -44,5 +45,20 @@ function remove (req) {
             })
 
         else self.success()
+    })
+}
+
+function saveFile (file, fileName) {
+    var data = ''
+    var options = {
+        fileName,
+        type:'jpg'
+    }
+
+    return new Promise(function (resolve) {
+        file.on('data', chunk => file += chunk)
+        file.on('end', function () {
+            base64ToImage(data, config.storage.image, options)
+        })
     })
 }
