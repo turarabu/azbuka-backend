@@ -1,4 +1,5 @@
 const fs = require('fs')
+const path = require('path')
 const base64ToImage = require('base64-to-image')
 
 module.exports = {
@@ -13,8 +14,8 @@ function upload (req) {
 
     req.busboy.on('file', async function (fieldname, file, filename) {
         console.log('Incoming file', filename)
-        await saveFile( file )
         ++files
+        await saveFile( file, filename )
 
         file.pipe(fstream)
         fstream.on('close', function () {
@@ -36,7 +37,7 @@ function remove (req) {
             message: `image param is required, but didn't send`
         })
 
-    else fs.unlink( config.storage.image(req.query.image), function (error) {
+    else fs.unlink( path.join(config.storage.image, req.query.image), function (error) {
         if (error)
             self.error({
                 error: true,
@@ -59,6 +60,8 @@ function saveFile (file, fileName) {
         file.on('data', chunk => file += chunk)
         file.on('end', function () {
             base64ToImage(data, config.storage.image, options)
+            resolve()
         })
+
     })
 }
