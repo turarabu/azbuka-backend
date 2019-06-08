@@ -52,9 +52,12 @@ function saveFile (file, fileName) {
     return new Promise(function (resolve) {
         file.on('data', chunk => file += chunk)
         file.on('end', function () {
-            fs.writeFileSync(config.storage.image(fileName), data, 'base64')
+            fs.writeFile(config.storage.image(fileName), data, 'base64', function (error) {
+                console.log(error)
+                resolve()
+
+            })
             // base64ToImage(data, config.storage.image, options)
-            resolve()
         })
 
     })
