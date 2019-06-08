@@ -48,15 +48,12 @@ function remove (req) {
 
 function saveFile (file, fileName) {
     var data = ''
-    var options = {
-        fileName,
-        type:'jpg'
-    }
 
     return new Promise(function (resolve) {
         file.on('data', chunk => file += chunk)
         file.on('end', function () {
-            base64ToImage(data, config.storage.image, options)
+            fs.writeFileSync(config.storage.image(fileName), data, 'base64')
+            // base64ToImage(data, config.storage.image, options)
             resolve()
         })
 

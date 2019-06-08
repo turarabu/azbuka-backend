@@ -23,6 +23,6 @@ function database () {
 
 function storage () {
     return {
-        image: path.join(__dirname, '../images')
+        image: filename => path.join(__dirname, '../images', filename)
     }
 }
