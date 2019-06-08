@@ -17,14 +17,11 @@ function upload (req) {
         ++files
         await saveFile( file, filename )
 
-        file.pipe(fstream)
-        fstream.on('close', function () {
-            console.log('File', filename, 'saved')
-            if (files -1 === 0)
-                return self.success()
+        console.log('File', filename, 'saved')
+        if (files -1 === 0)
+            return self.success()
 
-            else --files
-        })
+        else --files
     })
 }
 
