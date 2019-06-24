@@ -51,8 +51,8 @@ function saveFile (file, fileName) {
     return new Promise(function (resolve) {
         file.on('data', chunk => file += chunk)
         file.on('end', function () {
-            var buff = new Buffer(data, 'base64')
-            
+            var buff = new Buffer.from(data, 'base64')
+
             fs.writeFileSync(config.storage.image(fileName), buff)
             resolve()
         })
