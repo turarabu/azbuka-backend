@@ -1,6 +1,5 @@
 const fs = require('fs')
 const path = require('path')
-const base64ToImage = require('base64-to-image')
 
 module.exports = {
     post: { upload },
@@ -52,12 +51,10 @@ function saveFile (file, fileName) {
     return new Promise(function (resolve) {
         file.on('data', chunk => file += chunk)
         file.on('end', function () {
-            fs.writeFile(config.storage.image(fileName), data, 'base64', function (error) {
-                console.log(error)
-                resolve()
-
-            })
-            // base64ToImage(data, config.storage.image, options)
+            var buff = new Buffer(data, 'base64')
+            
+            fs.writeFileSync(config.storage.image(fileName), buff)
+            resolve()
         })
 
     })
