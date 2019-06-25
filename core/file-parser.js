@@ -2,6 +2,9 @@ const Readable = require('stream').Readable
 const Busboy = require('busboy')
 
 module.exports = function (req, res, next) {
+    if (req.headers['content-type'] === undefined)
+        return
+
     var body = ''
     var busboy = new Busboy({ headers: req.headers })
     var files = new Readable
