@@ -7,20 +7,25 @@ module.exports = {
 }
 
 function upload (req) {
-    console.log('Incoming upload')
-    var files = 0
+    var fileCount = 0
     var self = this
 
+    function files (action) {
+        return (action === undefined)
+            ? fileCount - 1
+            : (action === 'add')
+                ? ++fileCount
+                : --fileCount
+    }
+
     req.busboy.on('file', async function (fieldname, file, filename) {
-        console.log('Incoming file', filename)
-        ++files
+        await files('add')
         await saveFile( file, filename )
 
-        console.log('File', filename, 'saved')
-        if (files -1 === 0)
+        if (files() === 0)
             return self.success()
 
-        else --files
+        else files('sub')
     })
 }
 
@@ -49,13 +54,12 @@ function saveFile (file, fileName) {
     var data = ''
 
     return new Promise(function (resolve) {
-        file.on('data', chunk => file += chunk)
+        file.on('data', chunk => data += chunk)
         file.on('end', function () {
             var buff = new Buffer.from(data, 'base64')
 
             fs.writeFileSync(config.storage.image(fileName), buff)
             resolve()
         })
-
     })
 }
