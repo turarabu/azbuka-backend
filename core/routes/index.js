@@ -62,6 +62,7 @@ function decor (dir, type, method, db) {
 
     return function (req, res, next) {
         var cont = { next, db, success, error }
+        res.header('access-control-allow-origin', '*')
         handler.call(cont, req, res)
 
         function error (message) {
