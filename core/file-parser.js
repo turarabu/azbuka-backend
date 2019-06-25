@@ -3,7 +3,7 @@ const Busboy = require('busboy')
 
 module.exports = function (req, res, next) {
     if (req.headers['content-type'] === undefined)
-        return
+        return next()
 
     var body = ''
     var busboy = new Busboy({ headers: req.headers })
