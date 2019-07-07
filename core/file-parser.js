@@ -2,7 +2,7 @@ const Readable = require('stream').Readable
 const Busboy = require('busboy')
 
 module.exports = function (req, res, next) {
-    if (req.headers['content-type'] === undefined)
+    if (req.headers['content-type'] === undefined || req.url.search('image') < 0 )
         return next()
 
     var body = ''
