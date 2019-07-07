@@ -1,189 +1,130 @@
-const addRequires = ['id', 'idProduct']
-
 module.exports = {
-    post: { add, edit, remove },
+    post: { set, remove, list },
     get: { list }
 }
 
-async function add (req) {
-    console.log('Adding service')
-    var list = getList(req.body)
+async function set (req, res) {
+    var self = this
+    var result = await eachService(req.body, async function (service) {
+        let update = await setService(service, self.db.service)
+        return update
+    })
 
-    for (let i = 0; i != list.length; ++i) {
-        let service = list[i]
-        let check = await checkRequires(service, ...addRequires)
-        check = await existService(this.db.service, service, check)
-        check = await addService(this.db.service, service, check)
-
-        if (check !== true) {
-            console.log('Error: ', check)
-            return this.error(check)
-        }
-    }
-
-    return this.success()
+    return setStatus(result, res, this.success)
 }
 
-async function edit (req) {
-    console.log('Editing service')
-    var list = getList(req.body)
+async function remove (req, res) {
+    var self = this
+    var result = await eachService(req.body, async function (service) {
+        let remove = await removeService(service, self.db.service)
+        return remove
+    })
 
-    for (let i = 0; i != list.length; ++i) {
-        let service = list[i]
-        let check = await checkRequires(service, 'id')
-        check = await existService(this.db.service, service, check)
-        check = await editService(this.db.service, service, check)
-
-        if (check !== true) {
-            console.log('Error: ', check)
-            return this.error(check)
-        }
-    }
-
-    return this.success()
-}
-
-async function remove (req) {
-    console.log('Removing service')
-    var list = getList(req.body)
-
-    for (let i = 0; i != list.length; ++i) {
-        let service = list[i]
-        let check = await checkRequires(service, 'id')
-        check = await removeService(this.db.service, service, check)
-
-        if (check !== true) {
-            console.log('Error: ', check)
-            return this.error(check)
-        }
-    }
-
-    return this.success()
+    return setStatus(result, res, this.success)
 }
 
 function list (req, res) {
-    console.log('Getting service by ', req.query)
-    var self = this
-    var where = req.query
-
-    this.db.service.find(where).toArray(function (error, result) {
-        if (error)
-            self.error({
-                error: true,
-                message: `Database error`,
-                details: JSON.stringify(error) 
-            })
-
-        else {
-            res.status(200)
-            res.send( JSON.stringify({
-                error: false,
-                success: true,
-                data: result
-            }) )
-
+    this.db.service.find({}).toArray(function (error, result) {
+        if (error === null) {
+            res.send( JSON.stringify(result) )
             res.end()
         }
+
+        else setStatus ({
+            error: true,
+            message: `Database error: Can't get services list`,
+            details: JSON.stringify(service)
+        }, res)
     })
 }
 
-function getList (body) {
-    return body.many === true
-        ? body.list : [body]
+async function eachService (body, handler) {
+    return new Promise(async function (resolve) {
+        let list = body.many === undefined
+            ? [ body ] : body.list
+
+        let each = await runEach(list, handler)
+        resolve(each)
+    })
 }
 
-function checkRequires (service, ...requires) {
-    return iPromise(true, function (resolve) {
-        for(let r = 0; r != requires.length; ++r) {
-            if ( service[ requires[r]] === undefined )
-                return resolve({
-                    error: true,
-                    message: `Didn't recieve required param`,
-                    details: `Property ${requires[r]} not found in data ${ JSON.stringify(service) }`
-                })
+function runEach (list, handler) {
+    return new Promise(async function (resolve) {
+        for (let s = 0; s != list.length; ++s) {
+            let service = list[s]
+            let result = await checkResult(service, handler)
+
+            if (result !== true)
+                return resolve(result)
         }
 
         return resolve(true)
     })
 }
 
-function existService (db, service, check) {
-    return iPromise(check, function (resolve) {
-        var where = { id: service.id }
-        
-        console.log(where)
+function checkResult (service, handler) {
+    return new Promise(async function (resolve) {
+        let check = checkService(service)
 
-        db.findOne(where, dbHandler(resolve, function (result) {
-            if (result === null)
-                return resolve(false)
-            else return resolve(true)
-        }))
-    })
-}
-
-function addService (db, service, check) {
-    return iPromise(check, function (resolve) {
-        if (check === true)
-            return resolve({
-                error: true,
-                message: `Service with id ${service.id} already exists`
-            })
-
-        else db.insertOne(service, dbHandler(resolve, function () {
-            console.log(`Added service ${service.id} with name ${service.name}`)
-            resolve(true)
-        }))
-    })
-}
-
-function editService (db, service, check) {
-    return iPromise(check, function (resolve) {
-        if (check === false)
-            return resolve({
-                error: true,
-                message: `Service with id ${service.id} not exists`
-            })
-
-        else {
-            let where = { id: service.id }
-            let set = { $set: service }
-
-            db.updateOne(where, set, dbHandler(resolve, function () {
-                console.log(`Edited service ${service.id}`)
-                resolve(true)
-            }))
+        if (check === true) {
+            let result = await handler(service)
+            resolve(result)
         }
+    
+        else resolve(check)
     })
 }
 
-function removeService (db, service, check) {
-    return iPromise(check, function (resolve) {
-        let where = { id: service.id }
-        db.deleteOne(where, dbHandler(resolve, function (result) {
-            console.log(`Removed service ${service.id}`)
-            resolve(true)
-        }))
+function setStatus (result, res, success) {
+    if (result === true)
+        return success()
+    
+    else {
+        res.status(400)
+        res.send( JSON.stringify(result) )
 
+        return res.end()
+    }
+}
+
+function checkService (service) {
+        return service.id === undefined
+        ? {
+            error: true,
+            message: 'ID is not defined',
+            details: `Not found service ID in data ${ JSON.stringify(service) }`
+        } : true
+}
+
+function setService (service, db) {
+    var where = { id: service.id }
+    var set = { $set: service }
+
+    return new Promise(function (resolve) {
+        db.updateOne(
+            where, set, {upsert: true},
+            dbHandler(resolve, `Can\'t update service by ID ${service.id}`)
+        )
     })
 }
 
-function iPromise (check, callback) {
-    return new Promise(function (resolve, reject) {
-        if (check !== true && check !== false)
-            return resolve(check)
-        else return callback(resolve, reject)
+function removeService (service, db) {
+    return new Promise(function (resolve) {
+        db.deleteOne(
+            {id: service.id},
+            dbHandler(resolve, `Can\'t delete service by ID ${service.id}`)
+        )
     })
 }
 
-function dbHandler (resolve, callback) {
-    return function (error, result) {
-        if (error)
-            resolve({
-                error: true,
-                message: `Database error`,
-                details: JSON.stringify(error) 
-            })
+function dbHandler (resolve, errorText) {
+    return function (error) {
+        if (error) return resolve({
+            error: true,
+            message: `Database error: ${errorText}`,
+            details: JSON.stringify(error)
+        })
 
-        else callback(result)
+        else resolve(true)
     }
 }
