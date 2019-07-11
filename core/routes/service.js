@@ -35,8 +35,8 @@ function set (type, list) {
 
         this.db.service.updateOne(where, update, {upsert: true}, error => {
             wasError = ifError.call(this, error, wasError, {
-                message: 'Databse error',
-                details: `Can\'t update service by ID ${data.id}`
+                message: `Databse error: Can\'t update service by ID ${data.id}`,
+                details: error
             })
         })
     })
@@ -78,12 +78,18 @@ function getData (body) {
 }
 
 function ifError (error, wasError, data) {
-    return wasError === true
-        ? true : (error == false) // returns `false` or `true` after error
-            ? false
-            : this.error({
-                error: true,
-                message: data.message || data,
-                details: data.details || ''
-            }), true
+    if (wasError === true)
+        return true
+
+    else if (error !== null) {
+        this.error({
+            error: true,
+            message: data.message || data,
+            details: data.details || ''
+        })
+
+        return true
+    }
+
+    else return true
 }
