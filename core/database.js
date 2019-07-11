@@ -30,6 +30,7 @@ function connect (config, resolve, reject) {
             city: database.collection('city'),
             shop: database.collection('shop'),
             warehouse: database.collection('warehouse'),
+            stock: database.collection('stock'),
             service: database.collection('service'),
             item: database.collection('item'),
             catalog: database.collection('catalog'),

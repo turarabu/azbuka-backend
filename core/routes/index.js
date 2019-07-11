@@ -3,6 +3,7 @@ const routes = {
     shop: require('./shop'),
     city: require('./city'),
     warehouse: require('./warehouse'),
+    stock: require('./stock'),
     service: require('./service'),
     item: require('./item'),
     image: require('./image')
