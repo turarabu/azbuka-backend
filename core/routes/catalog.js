@@ -90,6 +90,7 @@ function list (req, res) {
 
 function clean () {
     this.db.catalog.drop()
+    this.success()
 }
 
 function getList (body) {
