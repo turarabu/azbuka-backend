@@ -31,7 +31,7 @@ function set (type, list) {
     list.forEach(data => {
         console.log(data)
         let where = { id: data.id }
-        let update = Object.assign(data, { type })
+        let update = { $set: Object.assign(data, { type }) }
 
         this.db.service.updateOne(where, update, {upsert: true}, error => {
             wasError = ifError.call(this, error, wasError, {
