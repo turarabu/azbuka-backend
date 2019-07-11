@@ -25,16 +25,14 @@ function connect (config, resolve, reject) {
         const database = client.db( config.base );
 
         return resolve({
-            test: database.collection('test'),
+            get: database,
 
             city: database.collection('city'),
             shop: database.collection('shop'),
             warehouse: database.collection('warehouse'),
             service: database.collection('service'),
             item: database.collection('item'),
-            catalog: database.collection('catalog')
-            // bonuses: database.collection('bonuses'),
-            // orders: database.collection('orders')
+            catalog: database.collection('catalog'),
         });
     }
 }

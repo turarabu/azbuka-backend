@@ -1,189 +1,144 @@
-const addRequires = ['id', 'parentId', 'name', 'headImage', 'buildable', 'manufacturer']
-
 module.exports = {
-    post: { add, edit, remove },
+    post: { add, edit },
     get: { list }
 }
 
-async function add (req) {
-    console.log('Adding item')
-    var list = getList(req.body)
+function add (req, res) {
+    return getDB.call(this, req.body, async db => {
+        let data = getData(req.body)
+        let errors = []
 
-    for (let i = 0; i != list.length; ++i) {
-        let item = list[i]
-        let check = await checkRequires(item, ...addRequires)
-        check = await existItem(this.db.item, item, check)
-        check = await addItem(this.db.item, item, check)
+        await each(data, (item, resolve) => {
+            db.findOne({id: item.id}, (error, result) => {
+                if (error)
+                    resolve(errors.push({
+                        message: 'Database error',
+                        details: error
+                    }))
 
-        if (check !== true) {
-            console.log('Error: ', check)
-            return this.error(check)
-        }
-    }
+                else if (result !== null)
+                    resolve(errors.push({
+                        message: `Item with id ${item.id} already exists`
+                    }))
 
-    return this.success()
-}
+                else db.insertOne(item, (error) => {
+                    if (error) errors.push({
+                        message: 'Database error',
+                        details: error
+                    })
 
-async function edit (req) {
-    console.log('Editing item')
-    var list = getList(req.body)
-
-    for (let i = 0; i != list.length; ++i) {
-        let item = list[i]
-        let check = await checkRequires(item, 'id')
-        check = await existItem(this.db.item, item, check)
-        check = await editItem(this.db.item, item, check)
-
-        if (check !== true) {
-            console.log('Error: ', check)
-            return this.error(check)
-        }
-    }
-
-    return this.success()
-}
-
-async function remove (req) {
-    console.log('Removing item')
-    var list = getList(req.body)
-
-    for (let i = 0; i != list.length; ++i) {
-        let item = list[i]
-        let check = await checkRequires(item, 'id')
-        check = await removeItem(this.db.item, item, check)
-
-        if (check !== true) {
-            console.log('Error: ', check)
-            return this.error(check)
-        }
-    }
-
-    return this.success()
-}
-
-function list (req, res) {
-    console.log('Getting item by ', req.query)
-    var self = this
-    var where = req.query
-
-    this.db.item.find(where).toArray(function (error, result) {
-        if (error)
-            self.error({
-                error: true,
-                message: `Database error`,
-                details: JSON.stringify(error) 
-            })
-
-        else {
-            res.status(200)
-            res.send( JSON.stringify({
-                error: false,
-                success: true,
-                data: result
-            }) )
-
-            res.end()
-        }
-    })
-}
-
-function getList (body) {
-    return body.many === true
-        ? body.list : [body]
-}
-
-function checkRequires (item, ...requires) {
-    return iPromise(true, function (resolve) {
-        for(let r = 0; r != requires.length; ++r) {
-            if ( item[ requires[r]] === undefined )
-                return resolve({
-                    error: true,
-                    message: `Didn't recieve required param`,
-                    details: `Property ${requires[r]} not found in data ${ JSON.stringify(item) }`
+                    return resolve()
                 })
+            })
+        })
+
+        if (errors.length === 0)
+            return this.success()
+        else {
+            res.statusCode = 400
+            res.send(JSON.stringify({
+                error: true,
+                success: true,
+                message: 'Error details in `details`',
+                details: errors
+            }))
+
+            return res.end()
         }
-
-        return resolve(true)
     })
 }
 
-function existItem (db, item, check) {
-    return iPromise(check, function (resolve) {
-        var where = { id: item.id }
-        
-        console.log(where)
+function edit () {
+    return getDB.call(this, req.body, async db => {
+        let data = getData(req.body)
+        let errors = []
 
-        db.findOne(where, dbHandler(resolve, function (result) {
-            if (result === null)
-                return resolve(false)
-            else return resolve(true)
-        }))
-    })
-}
+        await each(data, (item, resolve) => {
+            db.findOne({id: item.id}, (error, result) => {
+                if (error)
+                    resolve(errors.push({
+                        message: 'Database error',
+                        details: error
+                    }))
 
-function addItem (db, item, check) {
-    return iPromise(check, function (resolve) {
-        if (check === true)
-            return resolve({
-                error: true,
-                message: `Item with id ${item.id} already exists`
+                else if (result === null)
+                    resolve(errors.push({
+                        message: `Item with id ${item.id} not exists`
+                    }))
+
+                else db.updateOne({id: item.id}, { $set: item }, (error) => {
+                    if (error) errors.push({
+                        message: 'Database error',
+                        details: error
+                    })
+
+                    return resolve()
+                })
             })
+        })
 
-        else db.insertOne(item, dbHandler(resolve, function () {
-            console.log('Added item with id ', item.id)
-            resolve(true)
-        }))
-    })
-}
-
-function editItem (db, item, check) {
-    return iPromise(check, function (resolve) {
-        if (check === false)
-            return resolve({
-                error: true,
-                message: `Item with id ${item.id} not exists`
-            })
+        if (error.length === 0)
+            return this.success()
 
         else {
-            let where = { id: item.id }
-            let set = { $set: item }
-
-            db.updateOne(where, set, dbHandler(resolve, function () {
-                console.log('Edited item with id ', item.id)
-                resolve(true)
+            res.statusCode = 400
+            res.send(JSON.stringify({
+                error: true,
+                success: true,
+                message: 'Error details in `details`',
+                details: errors
             }))
+
+            return res.end()
         }
     })
 }
 
-function removeItem (db, item, check) {
-    return iPromise(check, function (resolve) {
-        let where = { id: item.id }
-        db.deleteOne(where, dbHandler(resolve, function (result) {
-            console.log('Removed item with id ', item.id)
-            resolve(true)
-        }))
+function list (req) {
+    return getDB.call(this, req.query, async db => {
+        delete req.query.shop
+        
+        db.find(req.query).toArray((error, result) => {
+            console.log(result)
+            if (error)
+                return this.error({
+                    error: true,
+                    message: `Database error`,
+                    details: JSON.stringify(error) 
+                })
 
+            else return this.success(result)
+        })
     })
 }
 
-function iPromise (check, callback) {
-    return new Promise(function (resolve, reject) {
-        if (check !== true && check !== false)
-            return resolve(check)
-        else return callback(resolve, reject)
-    })
-}
 
-function dbHandler (resolve, callback) {
-    return function (error, result) {
-        if (error)
-            resolve({
-                error: true,
-                message: `Database error`,
-                details: JSON.stringify(error) 
-            })
+function getDB (body, callback) {
+    if (body.shop === undefined)
+        return this.error({
+            message: `${c} param is required!`
+        })
 
-        else callback(result)
+    else {
+        var db = this.db.get.collection(`shop-${ body.shop }-items`)
+        return callback(db)
     }
+}
+
+function getData (data) {
+    return data.many === true
+        ? data.list : [data]
+}
+
+function each (data, callback) {
+    var promises = []
+
+    data.forEach(function (item) {
+        promises.push(new Promise(function (resolve, reject) {
+            delete item.shop
+            callback(item, resolve, reject)
+        }))
+    })
+
+    return Promise.all(promises)
 }
