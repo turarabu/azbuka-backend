@@ -2,7 +2,7 @@ const addRequires = ['id', 'name', 'parentId']
 
 module.exports = {
     post: { add, edit, remove },
-    get: { list }
+    get: { list, clean }
 }
 
 async function add (req) {
@@ -86,6 +86,10 @@ function list (req, res) {
             res.end()
         }
     })
+}
+
+function clean () {
+    this.db.catalog.drop()
 }
 
 function getList (body) {
