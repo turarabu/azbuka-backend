@@ -75,12 +75,14 @@ function decor (dir, type, method, db) {
             return res.end()
         }
 
-        function success () {
-            res.status(200);
-            res.send(JSON.stringify({
+        function success (data = {}) {
+            data = Object.assign({data}, {
                 error: false,
                 success: true
-            }));
+            })
+
+            res.status(200);
+            res.send( JSON.stringify(data) );
 
             return res.end()
         }

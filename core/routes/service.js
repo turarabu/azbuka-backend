@@ -1,130 +1,86 @@
 module.exports = {
-    post: { set, remove, list },
-    get: { list }
-}
+    get: { list },
+    post: {
+        'set-prices': setPrices,
+        'set-lefts': setLeft,
 
-async function set (req, res) {
-    var self = this
-    var result = await eachService(req.body, async function (service) {
-        let update = await setService(service, self.db.service)
-        return update
-    })
-
-    return setStatus(result, res, this.success)
-}
-
-async function remove (req, res) {
-    var self = this
-    var result = await eachService(req.body, async function (service) {
-        let remove = await removeService(service, self.db.service)
-        return remove
-    })
-
-    return setStatus(result, res, this.success)
-}
-
-function list (req, res) {
-    this.db.service.find({}).toArray(function (error, result) {
-        if (error === null) {
-            res.send( JSON.stringify(result) )
-            res.end()
-        }
-
-        else setStatus ({
-            error: true,
-            message: `Database error: Can't get services list`,
-            details: JSON.stringify(service)
-        }, res)
-    })
-}
-
-async function eachService (body, handler) {
-    return new Promise(async function (resolve) {
-        let list = body.many === undefined
-            ? [ body ] : body.list
-
-        let each = await runEach(list, handler)
-        resolve(each)
-    })
-}
-
-function runEach (list, handler) {
-    return new Promise(async function (resolve) {
-        for (let s = 0; s != list.length; ++s) {
-            let service = list[s]
-            let result = await checkResult(service, handler)
-
-            if (result !== true)
-                return resolve(result)
-        }
-
-        return resolve(true)
-    })
-}
-
-function checkResult (service, handler) {
-    return new Promise(async function (resolve) {
-        let check = checkService(service)
-
-        if (check === true) {
-            let result = await handler(service)
-            resolve(result)
-        }
-    
-        else resolve(check)
-    })
-}
-
-function setStatus (result, res, success) {
-    if (result === true)
-        return success()
-    
-    else {
-        res.status(400)
-        res.send( JSON.stringify(result) )
-
-        return res.end()
+        'remove-prices': removePrices,
+        'remove-lefts': removeLefts
     }
 }
 
-function checkService (service) {
-        return service.id === undefined
-        ? {
-            error: true,
-            message: 'ID is not defined',
-            details: `Not found service ID in data ${ JSON.stringify(service) }`
-        } : true
+function setPrices (req) {
+    var json = getData(req.body)
+    var type = 'price'
+
+    set.call(this, type, json)
 }
 
-function setService (service, db) {
-    var where = { id: service.id }
-    var set = { $set: service }
+function setLeft (req) {
+    var json = getData(req.body)
+    var type = 'lefts'
 
-    return new Promise(function (resolve) {
-        db.updateOne(
-            where, set, {upsert: true},
-            dbHandler(resolve, `Can\'t update service by ID ${service.id}`)
-        )
+    set.call(this, type, json)
+}
+
+function set (type, list) {
+    var wasError = false
+
+    list.forEach(data => {
+        let where = { id: data.id }
+        let update = Object.assign(data, { type })
+
+        this.db.service.updateOne(where, update, {upsert: true}, error => {
+            wasError = ifError.call(this, error, wasError, {
+                message: 'Databse error',
+                details: `Can\'t update service by ID ${data.id}`
+            })
+        })
     })
+
+    if (wasError === false)
+        return this.success()
 }
 
-function removeService (service, db) {
-    return new Promise(function (resolve) {
-        db.deleteOne(
-            {id: service.id},
-            dbHandler(resolve, `Can\'t delete service by ID ${service.id}`)
-        )
-    })
+function removePrices () {
+    this.success()
 }
 
-function dbHandler (resolve, errorText) {
-    return function (error) {
-        if (error) return resolve({
-            error: true,
-            message: `Database error: ${errorText}`,
-            details: JSON.stringify(error)
+function removeLefts () {
+    this.success()
+}
+
+function list (req) {
+    var type = req.query.type
+
+    if (type == false)
+        return ifError.call(this, true, false, {
+            message: 'type param is required!'
         })
 
-        else resolve(true)
-    }
+    else this.db.service.find(req.query).toArray((error, array) => {
+        var wasError = ifError.call(this, error, wasError, {
+            message: 'Databse error',
+            details: error
+        })
+
+        if (wasError === false)
+            return this.success(array)
+    })
+}
+
+function getData (body) {
+    return body.many === true
+        ? body.list : [body]
+}
+
+function ifError (error, wasError, data) {
+    return wasError === true
+        ? true : (error == false) // returns `false` or `true` after error
+            ? false
+            : this.error({
+                error: true,
+                message: data.message || data,
+                details: data.details || ''
+            }), true
 }
