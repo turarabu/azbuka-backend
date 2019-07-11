@@ -26,6 +26,7 @@ async function add (req) {
 
 async function edit (req) {
     console.log('Editing catalog')
+    console.log(req.body)
     var list = getList(req.body)
 
     for (let i = 0; i != list.length; ++i) {
