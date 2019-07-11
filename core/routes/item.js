@@ -34,6 +34,7 @@ function add (req, res) {
 
         if (errors.length === 0)
             return this.success()
+            
         else {
             res.statusCode = 400
             res.send(JSON.stringify({
@@ -48,7 +49,7 @@ function add (req, res) {
     })
 }
 
-function edit () {
+function edit (req, res) {
     return getDB.call(this, req.body, async db => {
         let data = getData(req.body)
         let errors = []
