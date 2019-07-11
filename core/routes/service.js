@@ -26,10 +26,9 @@ function setLeft (req) {
 function set (type, list) {
     var wasError = false
 
-    console.log( JSON.stringify(list) )
-
     list.forEach(data => {
-        console.log(data)
+        console.log(`updating service ${type}:`, data)
+
         let where = { id: data.id }
         let update = { $set: Object.assign(data, { type }) }
 
