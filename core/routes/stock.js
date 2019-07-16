@@ -24,17 +24,15 @@ async function remove (req, res) {
 }
 
 function list (req, res) {
-    this.db.stock.find({}).toArray(function (error, result) {
-        if (error === null) {
-            res.send( JSON.stringify(result) )
-            res.end()
-        }
+    this.db.stock.find({}).toArray((error, data) => {
+        if (error === null)
+            this.success({ data })
 
-        else setStatus ({
+        else this.error({
             error: true,
             message: `Database error: Can't get stocks list`,
             details: JSON.stringify(stock)
-        }, res)
+        })
     })
 }
 
@@ -88,7 +86,7 @@ function setStatus (result, res, success) {
 }
 
 function checkStock (stock) {
-        return stock.id === undefined
+    return stock.id === undefined
         ? {
             error: true,
             message: 'ID is not defined',
