@@ -24,7 +24,7 @@ async function remove (req, res) {
 }
 
 function list (req, res) {
-    this.db.shop.find(req.query).toArray(function (error, result) {
+    this.db.shop.find(req.query).toArray((error, result) => {
         if (error === null)
             this.success(result)
 
