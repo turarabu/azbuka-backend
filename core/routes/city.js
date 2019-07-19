@@ -24,11 +24,9 @@ async function remove (req, res) {
 }
 
 function list (req, res) {
-    this.db.city.find({}).toArray(function (error, result) {
-        if (error === null) {
-            res.send( JSON.stringify(result) )
-            res.end()
-        }
+    this.db.city.find(req.query).toArray(function (error, result) {
+        if (error === null)
+            this.success(result)
 
         else setStatus ({
             error: true,
