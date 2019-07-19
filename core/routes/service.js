@@ -111,5 +111,5 @@ function ifError (error, wasError, data) {
         return true
     }
 
-    else return false
+    else return false 
 }
