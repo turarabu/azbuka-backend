@@ -46,7 +46,7 @@ function set (type, list) {
 }
 
 function removePrices (req) {
-    var where = Object.assign(req.query, { type: 'lefts' })
+    var where = Object.assign(req.query, { type: 'price' })
 
     this.db.service.deleteMany(where, error => {
         if ( error === null )
@@ -60,7 +60,7 @@ function removePrices (req) {
 }
 
 function removeLefts () {
-    var where = Object.assign(req.query, { type: 'price' })
+    var where = Object.assign(req.query, { type: 'lefts' })
 
     this.db.service.deleteMany(where, error => {
         if ( error === null )
