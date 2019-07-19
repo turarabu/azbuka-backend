@@ -1,11 +1,12 @@
 module.exports = {
-    get: { list },
-    post: {
-        'set-prices': setPrices,
-        'set-lefts': setLeft,
-
+    get: {
+        list,
         'remove-prices': removePrices,
         'remove-lefts': removeLefts
+    },
+    post: {
+        'set-prices': setPrices,
+        'set-lefts': setLeft
     }
 }
 
@@ -44,12 +45,32 @@ function set (type, list) {
         return this.success()
 }
 
-function removePrices () {
-    this.success()
+function removePrices (req) {
+    var where = Object.assign(req.query, { type: 'lefts' })
+
+    this.db.service.delete(where, error => {
+        if ( error === null )
+            return this.success()
+        
+        else this.error({
+            message: `Databse error: Can\'t update service by ID ${data.id}`,
+            details: error
+        })
+    })
 }
 
 function removeLefts () {
-    this.success()
+    var where = Object.assign(req.query, { type: 'price' })
+
+    this.db.service.delete(where, error => {
+        if ( error === null )
+            return this.success()
+        
+        else this.error({
+            message: `Databse error: Can\'t update service by ID ${data.id}`,
+            details: error
+        })
+    })
 }
 
 function list (req) {
