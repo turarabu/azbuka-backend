@@ -21,22 +21,25 @@ function bonuse (req) {
 }
 
 function request (path, method, callback) {
-    var data = ''
-    var req = http.request({
+    var options = getOptions(path, method)
+    
+    http.request(options, (res) => {
+        var data = ''
+
+        res.on('data', chunk => data += chunk)
+        res.on('end', function () {
+            var json = JSON.parse(data)
+            callback(json)
+        })
+    })
+}
+
+function getOptions (path, method) {
+    return {
         path,
         method,
         host: '192.168.1.196',
         port: '80',
         auth: `${auth.user}:${auth.pass}`
-    })
-
-    req.on('data', function (chunk) {
-        data += chunk
-        console.log(`BODY: ${data}`);
-    })
-    
-    req.on('end', function () {
-        var json = JSON.parse(data)
-        callback(json)
-    })
+    }
 }
