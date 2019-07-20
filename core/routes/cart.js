@@ -14,7 +14,7 @@ function bonuse (req, res) {
     var path = `/madein/hs/mobileapp/bonuses?${ qstr.stringify({phoneNumber}) }`
 
     request(path, 'GET', {}, data => {
-        res.send(data)
+        res.send( success(data) )
         res.end()
     })
 }
@@ -42,4 +42,15 @@ function getOptions (path, method) {
         port: '80',
         auth: `${auth.user}:${auth.pass}`
     }
+}
+
+
+function success (data) {
+    var result = {
+        error: false,
+        success: true,
+        data: '%data%'
+    }
+
+    return JSON.stringify(result).replace('%data%', data)
 }
