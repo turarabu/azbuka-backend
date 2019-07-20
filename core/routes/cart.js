@@ -15,8 +15,9 @@ function bonuse (req) {
     console.log(path)
 
     request(path, 'GET', {}, data => {
-        console.log(data)
+        // console.log(data)
         this.success(data)
+        console.log( JSON.parse(data) )
     })
 }
 
