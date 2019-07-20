@@ -52,5 +52,5 @@ function success (data) {
         data: '%data%'
     }
 
-    return JSON.stringify(result).replace('%data%', data)
+    return JSON.stringify(result).replace('"%data%"', data)
 }
