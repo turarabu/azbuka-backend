@@ -6,18 +6,22 @@ const auth = {
 }
 
 module.exports = {
-    get: { bonuse }
+    get: { bonuse },
+    post: { order }
 }
 
-function bonuse (req, res) {
+function bonuse (req) {
     var phoneNumber = req.query.phone
     var path = `/madein/hs/mobileapp/bonuses?${ qstr.stringify({phoneNumber}) }`
 
-    request(path, 'GET', {}, data => {
-        this.success(data)
-        // res.send( success(data) )
-        // res.end()
-    })
+    request(path, 'GET', {}, this.success)
+}
+
+function order (req, res) {
+    var id = req.query.shop
+    var path = `/madein/hs/mobileapp/orders?${ qstr.stringify({id}) }`
+
+    request(path, 'POST', res.body, this.success)
 }
 
 function request (path, method, post, callback) {
@@ -44,15 +48,4 @@ function getOptions (path, method) {
         port: '80',
         auth: `${auth.user}:${auth.pass}`
     }
-}
-
-
-function success (data) {
-    var result = {
-        error: false,
-        success: true,
-        data: '%data%'
-    }
-
-    return JSON.stringify(result).replace('"%data%"', data)
 }
