@@ -27,7 +27,7 @@ function request (path, method, post, callback) {
 
         res.on('data', chunk => data += chunk)
         res.on('end', function () {
-            data = data.replace(/ /g, '')
+            data = data.replace(/\s/g, '')
             callback( JSON.parse(data) )
         })
     })
