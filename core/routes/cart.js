@@ -1,3 +1,4 @@
+const qstr = require('querystring')
 const http = require('http')
 const auth = {
     user: 'Web',
@@ -9,8 +10,8 @@ module.exports = {
 }
 
 function bonuse (req) {
-    var phone = req.query.phone
-    var path = `/madein/hs/mobileapp/bonuses?phoneNumber=${phone}`
+    var phoneNumber = req.query.phone
+    var path = `/madein/hs/mobileapp/bonuses?phoneNumber=${ qstr({phoneNumber}) }`
     console.log(path)
 
     request(path, data => {
