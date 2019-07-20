@@ -14,7 +14,7 @@ function bonuse (req) {
     var path = `/madein/hs/mobileapp/bonuses?${ qstr.stringify({phoneNumber}) }`
     console.log(path)
 
-    request(path, data => {
+    request(path, 'GET', data => {
         console.log(data)
         this.success(data)
     })
