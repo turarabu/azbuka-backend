@@ -12,14 +12,11 @@ module.exports = {
 function bonuse (req, res) {
     var phoneNumber = req.query.phone
     var path = `/madein/hs/mobileapp/bonuses?${ qstr.stringify({phoneNumber}) }`
-    console.log(path)
 
     request(path, 'GET', {}, data => {
-        // console.log(data)
-        // this.success(data)
+        console.log('cart', data.idCart)
         res.send(data)
         res.end()
-        // console.log( JSON.parse(data) )
     })
 }
 
@@ -30,8 +27,6 @@ function request (path, method, post, callback) {
 
         res.on('data', chunk => data += chunk)
         res.on('end', function () {
-            // console.lo
-            // var json = JSON.parse(data)
             callback(data)
         })
     })
