@@ -1,5 +1,6 @@
 const routes = {
     catalog: require('./catalog'),
+    cart: require('./cart'),
     shop: require('./shop'),
     city: require('./city'),
     warehouse: require('./warehouse'),
