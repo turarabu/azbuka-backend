@@ -32,7 +32,7 @@ function request (path, method, post, callback) {
         })
     })
 
-    req.write(post)
+    req.write( qstr.stringify(post) )
     return req.end()
 }
 
