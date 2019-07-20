@@ -30,7 +30,11 @@ function request (path, method, callback) {
         auth: `${auth.user}:${auth.pass}`
     })
 
-    req.on('data', chunk => data += chunk)
+    req.on('data', function (chunk) {
+        data += chunk
+        console.log(`BODY: ${data}`);
+    })
+    
     req.on('end', function () {
         var json = JSON.parse(data)
         callback(json)
