@@ -27,8 +27,9 @@ function request (path, method, post, callback) {
 
         res.on('data', chunk => data += chunk)
         res.on('end', function () {
-            var json = JSON.parse(data)
-            callback(json)
+            // console.lo
+            // var json = JSON.parse(data)
+            callback(data)
         })
     })
 
