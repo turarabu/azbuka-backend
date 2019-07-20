@@ -20,10 +20,9 @@ function bonuse (req) {
     })
 }
 
-function request (path, method, callback) {
+function request (path, method, post, callback) {
     var options = getOptions(path, method)
-    
-    http.request(options, (res) => {
+    var req = http.request(options, (res) => {
         var data = ''
 
         res.on('data', chunk => data += chunk)
@@ -32,6 +31,9 @@ function request (path, method, callback) {
             callback(json)
         })
     })
+
+    req.write(post)
+    return req.end()
 }
 
 function getOptions (path, method) {
