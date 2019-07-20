@@ -15,6 +15,7 @@ function bonuse (req, res) {
 
     request(path, 'GET', {}, data => {
         console.log('cart', data.idCart)
+        JSON.parse(data)
         res.send(data)
         res.end()
     })
