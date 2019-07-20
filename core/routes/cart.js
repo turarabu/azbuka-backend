@@ -9,15 +9,17 @@ module.exports = {
     get: { bonuse }
 }
 
-function bonuse (req) {
+function bonuse (req, res) {
     var phoneNumber = req.query.phone
     var path = `/madein/hs/mobileapp/bonuses?${ qstr.stringify({phoneNumber}) }`
     console.log(path)
 
     request(path, 'GET', {}, data => {
         // console.log(data)
-        this.success(data)
-        console.log( JSON.parse(data) )
+        // this.success(data)
+        res.send(data)
+        res.end()
+        // console.log( JSON.parse(data) )
     })
 }
 
