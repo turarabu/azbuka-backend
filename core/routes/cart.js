@@ -14,8 +14,9 @@ function bonuse (req, res) {
     var path = `/madein/hs/mobileapp/bonuses?${ qstr.stringify({phoneNumber}) }`
 
     request(path, 'GET', {}, data => {
-        res.send( success(data) )
-        res.end()
+        this.success(data)
+        // res.send( success(data) )
+        // res.end()
     })
 }
 
@@ -26,7 +27,12 @@ function request (path, method, post, callback) {
 
         res.on('data', chunk => data += chunk)
         res.on('end', function () {
-            callback(data)
+            data = data.replace(/ \{/g, '{')
+            data = data.replace(/ \}/g, '}')
+            data = data.replace(/\ "/g, '"')
+            data = data.replace(/\: /g, ':')
+            
+            callback( JSON.parse(data) )
         })
     })
 
