@@ -14,8 +14,6 @@ function bonuse (req, res) {
     var path = `/madein/hs/mobileapp/bonuses?${ qstr.stringify({phoneNumber}) }`
 
     request(path, 'GET', {}, data => {
-        console.log('cart', data.idCart)
-        JSON.parse(data)
         res.send(data)
         res.end()
     })
