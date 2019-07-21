@@ -14,9 +14,8 @@ async function set (req, res) {
 }
 
 async function remove (req, res) {
-    var self = this
-    var result = await eachCity(req.body, async function (city) {
-        let remove = await removeCity(city, self.db.city)
+    var result = await eachCity(req.body, async city => {
+        let remove = await removeCity(city, this.db.city)
         return remove
     })
 

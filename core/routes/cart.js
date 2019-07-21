@@ -21,7 +21,7 @@ function order (req, res) {
     var id = req.query.shop
     var path = `/madein/hs/mobileapp/orders?${ qstr.stringify({id}) }`
 
-    request(path, 'POST', res.body, this.success)
+    request(path, 'POST', JSON.parse(res.body.json), this.success)
 }
 
 function request (path, method, post, callback) {
