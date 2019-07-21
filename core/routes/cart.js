@@ -13,15 +13,15 @@ module.exports = {
 function bonuse (req) {
     var phoneNumber = req.query.phone
     var path = `/madein/hs/mobileapp/bonuses?${ qstr.stringify({phoneNumber}) }`
-
     request(path, 'GET', {}, this.success)
 }
 
 function order (req, res) {
     var id = req.query.shop
     var path = `/madein/hs/mobileapp/orders?${ qstr.stringify({id}) }`
+    console.log(res.body)
 
-    request(path, 'POST', JSON.parse(res.body.json), this.success)
+    request(path, 'POST', res.body, this.success)
 }
 
 function request (path, method, post, callback) {
