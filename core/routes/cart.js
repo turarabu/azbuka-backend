@@ -29,7 +29,11 @@ function request (path, method, post, callback) {
     var req = http.request(options, (res) => {
         var data = ''
 
-        res.on('data', chunk => data += chunk)
+        res.on('data', chunk => {
+            
+            data += chunk
+            console.log(data)
+        })
         res.on('end', function () {
             data = data.replace(/\s/g, '')
             callback( JSON.parse(data) )
