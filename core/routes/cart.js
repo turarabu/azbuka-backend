@@ -28,12 +28,13 @@ function request (path, method, post, callback) {
     var options = getOptions(path, method)
     var req = http.request(options, (res) => {
         var data = ''
-
+        console.log('start')
         res.on('data', chunk => {
-            
+            console.log('chunk')
             data += chunk
             console.log(data)
         })
+
         res.on('end', function () {
             data = data.replace(/\s/g, '')
             callback( JSON.parse(data) )
