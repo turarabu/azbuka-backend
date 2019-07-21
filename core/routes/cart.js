@@ -32,7 +32,7 @@ function request (path, method, post, callback) {
         res.on('data', chunk => {
             console.log('chunk')
             data += chunk
-            console.log(data)
+            console.log(chunk)
         })
 
         res.on('end', function () {
