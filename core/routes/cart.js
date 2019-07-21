@@ -19,7 +19,7 @@ function bonuse (req) {
 function order (req, res) {
     var id = req.query.shop
     var path = `/madein/hs/mobileapp/orders?${ qstr.stringify({id}) }`
-    console.log(res.body)
+    console.log(req.query)
 
     request(path, 'POST', {}, this.success)
 }
