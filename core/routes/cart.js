@@ -51,6 +51,9 @@ function getOptions (path, method) {
         method,
         host: '192.168.1.196',
         port: '80',
-        auth: `${auth.user}:${auth.pass}`
+        auth: `${auth.user}:${auth.pass}`,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
     }
 }
