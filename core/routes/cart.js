@@ -38,7 +38,7 @@ function request (path, method, post, callback) {
 
         res.on('end', function () {
             data = data.replace(/\s/g, '')
-            callback( JSON.parse(data) )
+            // callback( JSON.parse(data) )
         })
     })
 
