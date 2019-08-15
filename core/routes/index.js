@@ -56,7 +56,7 @@ function signErrors (router, mongodb) {
                 message: 'method does not exists!'
             }))
 
-            console.log('Response code', 400, {
+            console.log('Response code', 404, {
                 success: false,
                 message: 'method does not exists!'
             })
