@@ -106,7 +106,7 @@ function remove (req) {
         console.log(req.body)
 
         await each(data, (item, resolve) => {
-            db.remove({id: item.id}, (error) => {
+            db.deleteOne({id: item}, (error) => {
                 if (error) errors.push({
                     message: 'Database error',
                     details: error
