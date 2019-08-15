@@ -23,7 +23,7 @@ async function remove (req, res) {
     return setStatus(result, res, this.success)
 }
 
-function list (req, res) {
+function list () {
     this.db.stock.find({}).toArray((error, result) => {
         if (error === null)
             this.success(result)

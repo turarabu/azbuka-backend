@@ -50,6 +50,7 @@ function add (req, res) {
 }
 
 function edit (req, res) {
+    console.log('Incoming items edit request')
     return getDB.call(this, req.body, async db => {
         let data = getData(req.body)
         let errors = []
