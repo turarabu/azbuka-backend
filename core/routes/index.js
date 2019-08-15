@@ -54,7 +54,12 @@ function signErrors (router, mongodb) {
             res.send(JSON.stringify({
                 success: false,
                 message: 'method does not exists!'
-            }));
+            }))
+
+            console.log('Response code', 400, {
+                success: false,
+                message: 'method does not exists!'
+            })
         }
 
         else next();
@@ -71,6 +76,7 @@ function decor (dir, type, method, db) {
         handler.call(cont, req, res)
 
         function error (message) {
+            console.log('Response code', 400, message)
             res.status(400);
             res.send( JSON.stringify(message) )
 
@@ -83,6 +89,7 @@ function decor (dir, type, method, db) {
                 success: true
             })
 
+            console.log('Response code', 200, data)
             res.status(200);
             res.send( JSON.stringify(data) );
 
