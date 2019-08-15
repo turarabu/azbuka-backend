@@ -78,7 +78,7 @@ function edit (req, res) {
             })
         })
 
-        if (error.length === 0)
+        if (errors.length === 0)
             return this.success()
 
         else {

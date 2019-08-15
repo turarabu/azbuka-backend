@@ -22,6 +22,7 @@ function order (req, res) {
     var data = JSON.parse(req.query.json)
     var order = {order: JSON.stringify(data.order)}
     this.success()
+    
     request(path, 'POST', order, this.success)
 }
 
