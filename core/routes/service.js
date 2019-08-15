@@ -11,6 +11,7 @@ module.exports = {
 }
 
 function setPrices (req) {
+    console.log('Incoming service prices set request')
     var json = getData(req.body)
     var type = 'price'
 
@@ -18,6 +19,7 @@ function setPrices (req) {
 }
 
 function setLeft (req) {
+    console.log('Incoming lefts service set request')
     var json = getData(req.body)
     var type = 'lefts'
 
@@ -25,6 +27,7 @@ function setLeft (req) {
 }
 
 function set (type, list) {
+    console.log('Incoming service set request')
     var wasError = false
 
     list.forEach(data => {

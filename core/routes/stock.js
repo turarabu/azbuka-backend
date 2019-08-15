@@ -4,6 +4,7 @@ module.exports = {
 }
 
 async function set (req, res) {
+    console.log('Incoming stocks set request')
     var self = this
     var result = await eachStock(req.body, async function (stock) {
         let update = await setStock(stock, self.db.stock)

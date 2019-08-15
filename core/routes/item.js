@@ -4,6 +4,7 @@ module.exports = {
 }
 
 function add (req, res) {
+    console.log('Incoming items add request')
     return getDB.call(this, req.body, async db => {
         let data = getData(req.body)
         let errors = []

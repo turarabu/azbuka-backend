@@ -7,6 +7,7 @@ module.exports = {
 }
 
 function upload (req) {
+    console.log('Incoming images upload request')
     var fileCount = 0
     var self = this
 
@@ -30,6 +31,7 @@ function upload (req) {
 }
 
 function remove (req) {
+    console.log('Incoming images remove request')
     var self = this
 
     if (req.query.image === undefined)
