@@ -1,5 +1,5 @@
 module.exports = {
-    post: { add, edit },
+    post: { add, edit, remove },
     get: { list }
 }
 
@@ -77,6 +77,42 @@ function edit (req, res) {
 
                     return resolve()
                 })
+            })
+        })
+
+        if (errors.length === 0)
+            return this.success()
+
+        else {
+            res.statusCode = 400
+            res.send(JSON.stringify({
+                error: true,
+                success: true,
+                message: 'Error details in `details`',
+                details: errors
+            }))
+
+            return res.end()
+        }
+    })
+}
+
+function remove (req) {
+    console.log('Incoming items remove request')
+    return getDB.call(this, req.body, async db => {
+        let data = getData(req.body)
+        let errors = []
+
+        console.log(req.body)
+
+        await each(data, (item, resolve) => {
+            db.remove({id: item.id}, (error) => {
+                if (error) errors.push({
+                    message: 'Database error',
+                    details: error
+                })
+
+                else return resolve()
             })
         })
 
