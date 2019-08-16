@@ -21,7 +21,6 @@ function order (req, res) {
     var path = `/madein/hs/mobileapp/orders?${ qstr.stringify({id}) }`
     var data = JSON.parse(req.query.json)
     var order = {order: JSON.stringify(data.order)}
-    this.success()
     
     request(path, 'POST', order, this.success)
 }
@@ -40,7 +39,7 @@ function request (path, method, post, callback) {
         res.on('end', function () {
             console.log(data)
             data = data.replace(/\s/g, '')
-            // callback( JSON.parse(data) )
+            callback( JSON.parse(data) )
         })
     })
 
