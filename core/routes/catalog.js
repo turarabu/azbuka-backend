@@ -50,6 +50,7 @@ async function remove (req) {
 
     for (let i = 0; i != list.length; ++i) {
         let catalog = list[i]
+        let check = true
         check = await removeCatalog(this.db.catalog, catalog, check)
 
         if (check !== true) {
