@@ -50,7 +50,6 @@ async function remove (req) {
 
     for (let i = 0; i != list.length; ++i) {
         let catalog = list[i]
-        let check = await checkRequires(catalog, 'id')
         check = await removeCatalog(this.db.catalog, catalog, check)
 
         if (check !== true) {
@@ -164,7 +163,7 @@ function editCatalog (db, catalog, check) {
 
 function removeCatalog (db, catalog, check) {
     return iPromise(check, function (resolve) {
-        let where = { id: catalog.id }
+        let where = { id: catalog }
         db.deleteOne(where, dbHandler(resolve, function (result) {
             console.log(`Removed catalog ${catalog.id}`)
             resolve(true)
