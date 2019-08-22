@@ -115,6 +115,11 @@ function list (req) {
     })
 }
 
+function getData (body) {
+    return body.many === true
+        ? body.list : [body]
+}
+
 /*
 function setPrices (req) {
     console.log('Incoming service prices set request')
