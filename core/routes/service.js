@@ -10,14 +10,14 @@ module.exports = {
     }
 }
 
-function setPrices (req) {
+async function setPrices (req) {
     console.log('Incoming service price set request')
     var data = getData(req.body)
     var errors = []
 
     for ( let service of data ) {
         let where = priceWhere(service)
-        let error = set.call(this, where, service)
+        let error = await set.call(this, where, service)
 
         if ( error !== true )
             errors.push(error)
@@ -46,14 +46,14 @@ function priceWhere (service) {
 }
 
 // Left services
-function setLeft (req) {
+async function setLeft (req) {
     console.log('Incoming service left set request')
     var data = getData(req.body)
     var errors = []
 
     for ( let service of data ) {
         let where = leftWhere(service)
-        let error = set.call(this, where, service)
+        let error = await set.call(this, where, service)
 
         if ( error !== true )
             errors.push(error)
