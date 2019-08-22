@@ -22,9 +22,13 @@ function setPrices (req) {
             errors.push(error)
     }
 
-    return errors.length > 0
-        ? this.error(errors)
-        : this.success()
+    return errors.length === 0
+        ? this.success()
+        : this.error({
+            error: true,
+            success: false,
+            details: errors
+        })
 }
 
 function priceWhere (service) {
@@ -53,9 +57,13 @@ function setLeft (req) {
             errors.push(error)
     }
 
-    return errors.length > 0
-        ? this.error(errors)
-        : this.success()
+    return errors.length === 0
+        ? this.success()
+        : this.error({
+            error: true,
+            success: false,
+            details: errors
+        })
 }
 
 function leftWhere (service) {
@@ -85,13 +93,19 @@ function list (req) {
     var type = req.query.type
 
     if ( !type )
-        return this.error('type param is required!')
+        return this.error({
+            error: true,
+            success: false,
+            message: 'type param is required!'
+        })
 
     else this.db.service.find(req.query).toArray((error, array) => {
         if ( !error )
             this.success(array)
 
         else this.error({
+            error: true,
+            success: false,
             message: 'Databse error',
             details: error
         })
