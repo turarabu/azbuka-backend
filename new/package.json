@@ -1,0 +1,14 @@
+{
+  "name": "azbuka-backend",
+  "version": "0.2.0",
+  "description": "Azbuka Backend",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Turar Abu",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

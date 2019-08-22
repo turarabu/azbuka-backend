@@ -1,8 +1,8 @@
 module.exports = {
     get: {
         list,
-        'remove-prices': removePrices,
-        'remove-lefts': removeLefts
+        // 'remove-prices': removePrices,
+        // 'remove-lefts': removeLefts
     },
     post: {
         'set-prices': setPrices,
@@ -10,6 +10,95 @@ module.exports = {
     }
 }
 
+function setPrices (req) {
+    var data = getData(req.body)
+    var errors = []
+
+    for ( let service of data ) {
+        let where = priceWhere(service)
+        let error = set.call(this, where, service)
+
+        if ( error !== true )
+            errors.push(error)
+    }
+
+    return errors.length > 0
+        ? this.error(errors)
+        : this.success()
+}
+
+function priceWhere (service) {
+    var where = {
+        type: 'price',
+        name: service.name
+    }
+    
+    if ( service.name == 'Доставка' )
+        where.idLocality = service.idLocality
+    else where.id = service.id
+
+    return where
+}
+
+// Left services
+function setLeft (req) {
+    var data = getData(req.body)
+    var errors = []
+
+    for ( let service of data ) {
+        let where = leftWhere(service)
+        let error = set.call(this, where, service)
+
+        if ( error !== true )
+            errors.push(error)
+    }
+
+    return errors.length > 0
+        ? this.error(errors)
+        : this.success()
+}
+
+function leftWhere (service) {
+    return {
+        type: 'left',
+        id: service.id,
+        name: service.name
+    }
+}
+
+// Setter
+function set (where, service) {
+    return new Promise(resolve => {
+        this.db.service.updateOne(where, service, {upsert: true}, error => {
+            if ( !error )
+                resolve(true)
+            
+            else resolve({
+                message: `Databse error: Can\'t update service by ID ${{where}}`,
+                details: error
+            })
+        })
+    })
+}
+
+function list (req) {
+    var type = req.query.type
+
+    if ( !type )
+        return this.error('type param is required!')
+
+    else this.db.service.find(req.query).toArray((error, array) => {
+        if ( !error )
+            this.success(array)
+
+        else this.error({
+            message: 'Databse error',
+            details: error
+        })
+    })
+}
+
+/*
 function setPrices (req) {
     console.log('Incoming service prices set request')
     var json = getData(req.body)
@@ -115,4 +204,4 @@ function ifError (error, wasError, data) {
     }
 
     else return false 
-}
+}*/

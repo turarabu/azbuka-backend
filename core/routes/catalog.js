@@ -166,7 +166,7 @@ function removeCatalog (db, catalog, check) {
     return iPromise(check, function (resolve) {
         let where = { id: catalog }
         db.deleteOne(where, dbHandler(resolve, function (result) {
-            console.log(`Removed catalog ${catalog.id}`)
+            console.log(`Removed catalog ${catalog}`)
             resolve(true)
         }))
 

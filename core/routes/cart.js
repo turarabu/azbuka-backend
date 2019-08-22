@@ -43,7 +43,6 @@ function request (path, method, post, callback) {
         })
     })
 
-    console.log(post)
     req.write( qstr.stringify(post) )
     return req.end()
 }
