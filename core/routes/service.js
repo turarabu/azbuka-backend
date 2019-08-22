@@ -84,8 +84,8 @@ function set (where, service) {
                 resolve(true)
             
             else resolve({
-                message: `Databse error: Can\'t update service by ID ${{where}}`,
-                details: error
+                message: `Databse error: Can\'t update service ${ JSON.stringify(where) }`,
+                details: JSON.stringify(error)
             })
         })
     })
