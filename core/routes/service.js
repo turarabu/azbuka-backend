@@ -79,11 +79,13 @@ function leftWhere (service) {
 // Setter
 function set (where, service) {
     var data = { $set: service }
-    
+
     return new Promise(resolve => {
         this.db.service.updateOne(where, data, {upsert: true}, error => {
-            if ( !error )
+            if ( !error ) {
                 resolve(true)
+                console.log('Writted service', service)
+            }
             
             else resolve({
                 message: `Databse error: Can\'t update service ${ JSON.stringify(where) }`,
