@@ -11,6 +11,7 @@ module.exports = {
 }
 
 function setPrices (req) {
+    console.log('Incoming service price set request')
     var data = getData(req.body)
     var errors = []
 
@@ -46,6 +47,7 @@ function priceWhere (service) {
 
 // Left services
 function setLeft (req) {
+    console.log('Incoming service left set request')
     var data = getData(req.body)
     var errors = []
 
@@ -90,6 +92,7 @@ function set (where, service) {
 }
 
 function list (req) {
+    console.log('Incoming service list request')
     var type = req.query.type
 
     if ( !type )
