@@ -120,6 +120,7 @@ function list (req) {
 }
 
 function getData (body) {
+    console.log(body)
     return body.many === true
         ? body.list : [body]
 }
