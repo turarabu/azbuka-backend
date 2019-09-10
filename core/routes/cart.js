@@ -59,3 +59,9 @@ function getOptions (path, method) {
         }
     }
 }
+
+var cron = setInterval(function () {
+    var phoneNumber = '+79831234567'
+    var path = `/madein/hs/mobileapp/bonuses?${ qstr.stringify({phoneNumber}) }`
+    request(path, 'GET', {}, () => {})
+}, 1000 * 60 * 5)
